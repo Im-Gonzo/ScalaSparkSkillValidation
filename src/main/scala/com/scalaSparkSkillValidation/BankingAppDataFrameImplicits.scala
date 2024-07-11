@@ -12,7 +12,7 @@ object BankingAppDataFrameImplicits {
      *
      * @return DataFrame: The joined and transformed data
      */
-    def createJoinedAccountView(): DataFrame = {
+    def createJoinedAccountDataFrame(): DataFrame = {
       val accounts = spark.table("accounts")
       val accountHolders = spark.table("accountHolders")
 
@@ -33,7 +33,7 @@ object BankingAppDataFrameImplicits {
      *
      * @return DataFrame: The formatted data
      * */
-    def createCustomerInfoView(): DataFrame = {
+    def createCustomerInfoDataFrame(): DataFrame = {
       val customers = spark.table("customers")
 
       customers.select(
@@ -51,7 +51,7 @@ object BankingAppDataFrameImplicits {
      *
      * @return DataFrame: The joined and transformed data
      * */
-    def createTransactionSummaryView(): DataFrame = {
+    def createTransactionSummaryDataFrame(): DataFrame = {
       val accounts = spark.table("accounts")
       val transactions = spark.table("transactions")
 
@@ -64,11 +64,15 @@ object BankingAppDataFrameImplicits {
         )
     }
 
-    /***/
-    def createCustomerOverallView(): DataFrame = {
-      val joinedAccounts = createJoinedAccountView()
-      val customerInfo = createCustomerInfoView()
-      val transactionSummary = createTransactionSummaryView()
+    /**
+     * Creates a joined DataFrame of joined_accounts, customer_info, transaction_summary
+     *
+     * @return DataFrame: The joined and transformed data
+     * */
+    def createCustomerOverallDataFrame(): DataFrame = {
+      val joinedAccounts = createJoinedAccountDataFrame()
+      val customerInfo = createCustomerInfoDataFrame()
+      val transactionSummary = createTransactionSummaryDataFrame()
 
       joinedAccounts.join(customerInfo, Seq("CustomerID"))
         .join(transactionSummary, Seq("AccountID"), "left")
