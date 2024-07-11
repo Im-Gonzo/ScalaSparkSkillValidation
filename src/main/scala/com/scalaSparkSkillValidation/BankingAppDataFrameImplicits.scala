@@ -5,7 +5,8 @@ import org.apache.spark.sql.functions._
 
 object BankingAppDataFrameImplicits {
 
-  implicit  class BankingAppExtension(spark: SparkSession) {
+  implicit class BankingAppDataFrameExtension(spark: SparkSession)
+  {
 
     /**
      * Creates a joined DataFrame of accounts and accountHolders
