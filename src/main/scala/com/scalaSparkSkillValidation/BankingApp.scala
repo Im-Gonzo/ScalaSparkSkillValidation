@@ -1,10 +1,8 @@
 package com.scalaSparkSkillValidation
 
-import org.apache.spark.sql.{DataFrame, SparkSession}
+import org.apache.spark.sql.SparkSession
 import org.apache.log4j._
-import org.apache.spark.sql.functions._
-import com.scalaSparkSkillValidation.models._
-import com.scalaSparkSkillValidation.utils.DataGenerator
+
 
 object BankingApp {
 
@@ -34,6 +32,30 @@ object BankingApp {
   }
 
   /**
+   * Creates a temporary view that shows customer information
+   *
+   * @params spark: SparkSession
+   * @return Unit: Doesn't return anything
+   * @note This function assumes `customers` exists in the Spark SQL Catalog.
+   * */
+  def createCustomerInfoView(spark: SparkSession): Unit = {
+    spark.sql(
+      """
+        |CREATE OR REPLACE TEMPORARY VIEW customer_info AS
+        |SELECT
+        | c.CustomerID,
+        | c.Name,
+        | c.Age,
+        | CASE
+        |   WHEN c.Age < 30 THEN 'Young'
+        |   WHEN c.Age >= 30 AND c.Age < 60 THEN 'Middle-aged'
+        |   WHEN c.Age > 60 THEN 'Senior'
+        |  END AS AgeGroup
+        | FROM customers AS c
+        |""".stripMargin)
+  }
+
+  /**
    * Process banking data by creating a series of views available in the Spark SQL Catalog
    *
    * @param spark: SparkSession
@@ -45,6 +67,7 @@ object BankingApp {
   def processBankingData(spark: SparkSession): Unit = {
       try{
         createJoinedAccountsView(spark)
+        createCustomerInfoView(spark)
       }catch {
         case e: Exception =>
           println(s"Error processing banking data: ${e.getMessage}")
