@@ -4,7 +4,7 @@ import org.apache.spark.sql.SparkSession
 
 object BankingAppSQLImplicits {
 
-  implicit class BankingAppExtension(spark: SparkSession)
+  implicit class BankingAppSQLExtension(spark: SparkSession)
   {
 
     /**
