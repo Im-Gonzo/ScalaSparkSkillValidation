@@ -8,8 +8,6 @@ import com.holdenkarau.spark.testing.SharedSparkContext
 import com.scalaSparkSkillValidation.utils.DataGenerator
 import org.apache.spark.sql.functions._
 
-import java.sql.{Date, Timestamp}
-
 
 class BankingAppTest extends AnyFlatSpec with Matchers with SharedSparkContext {
 
