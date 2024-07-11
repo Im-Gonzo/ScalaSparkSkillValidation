@@ -2,11 +2,21 @@ package com.scalaSparkSkillValidation.utils
 
 import org.apache.spark.sql.{DataFrame, SparkSession}
 import com.scalaSparkSkillValidation.models._
-
 import java.sql.{Timestamp, _}
 
+
+/**
+ * Object responsible for generating sample data.
+ * Creates DataFrames for Accounts, Transactions, Customers, AccountHolders
+ * */
 object DataGenerator {
 
+  /**
+   * Generates sample date.
+   *
+   * @param spark: SparkSession.
+   * @return Tuple with 4 DataFrames (accounts, transactions, customers, accountHolders).
+   * */
   def generateSampleData(spark: SparkSession): (DataFrame, DataFrame, DataFrame, DataFrame) = {
     import spark.implicits._
 
