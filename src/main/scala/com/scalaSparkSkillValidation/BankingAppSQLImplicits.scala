@@ -2,7 +2,7 @@ package com.scalaSparkSkillValidation
 
 import org.apache.spark.sql.SparkSession
 
-object BankingAppImplicits {
+object BankingAppSQLImplicits {
 
   implicit class BankingAppExtension(spark: SparkSession)
   {
@@ -10,7 +10,6 @@ object BankingAppImplicits {
     /**
      * Creates a temporary view that joins accounts and accountHolders tables
      *
-     * @param spark: SparkSession
      * @return Unit: Doesn't return anything
      *
      * @note This function assumes `accounts` and `accountHolders` exists in the Spark SQL Catalog.
@@ -60,7 +59,6 @@ object BankingAppImplicits {
     /**
      * Creates a temporary view that shows transactions from customers formatted.
      *
-     * @param spark: SparkSession
      * @return Unit: Doesn't return anything
      * @note This function assumes `transactions` exists in the Spark SQL Catalog
      * */
@@ -82,7 +80,6 @@ object BankingAppImplicits {
     /**
      * Creates a temporary view that shows overall information from customer
      *
-     * @param spark: SparkSession
      * @return Unit: Doesn't return anything
      *
      * @note This function assumes `joined_accounts`, `customer_info`, `transaction_summary` exists  in the Spark SQL Catalog
@@ -117,7 +114,6 @@ object BankingAppImplicits {
     /**
      * Process banking data by creating a series of views available in the Spark SQL Catalog
      *
-     * @param spark: SparkSession
      * @throws Exception: Handles exceptions internally.
      *
      * @note This function assumes that `accounts`, `transactions`, `customers`, `accountHolders`
