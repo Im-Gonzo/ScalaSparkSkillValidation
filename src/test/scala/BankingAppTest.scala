@@ -14,30 +14,50 @@ import org.apache.spark.sql.functions._
 class BankingAppTest extends AnyFlatSpec with Matchers with SharedSparkContext {
 
   /**
-   * Test if BakingApp processes banking dummy data correctly.
-   * Generates sample data, registers it in Spark SQL Catalog, process it, and verifies result.
+   * Set up common test data
+   *
+   * @param spark: SparkSession
+   * @return Unit: Doesn't return anything
    * */
-  "BankingApp" should "process banking data correctly" in {
-    val spark = SparkSession.builder().config(sc.getConf).getOrCreate()
-
-    import spark.implicits._
-
-    // Load dummy data
+  def setupTestData(spark: SparkSession): Unit = {
     val (accounts, transactions, customers, accountHolders) = DataGenerator.generateSampleData(spark)
-
-    // Register DataFrames in Spark SQL Catalog.
-    accounts.createOrReplaceTempView("accounts")
-    transactions.createOrReplaceTempView("transactions")
-    customers.createOrReplaceTempView("customers")
-    accountHolders.createOrReplaceTempView("accountHolders")
-
+    Seq(
+      (accounts, "accounts"),
+      (transactions, "transactions"),
+      (customers, "customers"),
+      (accountHolders, "accountHolders")
+    ).foreach { case (df, name) => df.createOrReplaceTempView(name) }
     BankingApp.processBankingData(spark)
+  }
 
-    /**@note Table `joined_accounts` gets queried from Spark SQL Catalog*/
+  /**
+   * Test if BakingApp creates `joined_accounts` temporary view with the correct amount of rows.
+   * */
+  "BankingApp" should "create joined_accounts view correctly" in {
+    val spark = SparkSession.builder().config(sc.getConf).getOrCreate()
+    setupTestData(spark)
+
     val joinedAccountResult = spark.sql("SELECT * FROM joined_accounts")
-
+    val accounts = spark.table("accounts")
     joinedAccountResult.count() shouldBe accounts.count()
 
+    spark.stop()
+  }
 
+  /**
+   * Test if BankingApp creaste `customer_info` temporary view with the correct columns.
+   * */
+  it should "create customer_info view with required columns" in {
+    val spark = SparkSession.builder().config(sc.getConf).getOrCreate()
+    setupTestData(spark)
+
+    val customerInfoViewResult = spark.sql("SELECT * FROM customer_info")
+    val requiredColumns = Seq("CustomerID", "Name", "Age", "AgeGroup")
+
+    requiredColumns.foreach { col =>
+      customerInfoViewResult.columns should contain (col)
+    }
+
+    spark.stop()
   }
 }
