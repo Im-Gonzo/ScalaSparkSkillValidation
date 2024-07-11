@@ -49,8 +49,7 @@ class BankingAppTest extends AnyFlatSpec with Matchers with SharedSparkContext {
       (customers, "customers"),
       (accountHolders, "accountHolders")
     ).foreach { case (df, name) => df.createOrReplaceTempView(name) }
-    BankingApp.processBankingData
-
+    BankingApp.processBankingDataSQL
   }
 
   /**
