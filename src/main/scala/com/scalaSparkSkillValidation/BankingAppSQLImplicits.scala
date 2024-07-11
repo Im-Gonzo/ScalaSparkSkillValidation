@@ -119,7 +119,7 @@ object BankingAppSQLImplicits {
      * @note This function assumes that `accounts`, `transactions`, `customers`, `accountHolders`
      *       tables/views exists in the Spark SQL Catalog.
      * */
-    def processBankingData(): Unit = {
+    def processBankingDataSQL(): Unit = {
       try{
         createJoinedAccountsView()
         createCustomerInfoView()
