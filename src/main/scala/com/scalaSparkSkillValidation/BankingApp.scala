@@ -2,12 +2,12 @@ package com.scalaSparkSkillValidation
 
 import org.apache.spark.sql.SparkSession
 import org.apache.log4j._
-import BankingAppImplicits._
+import BankingAppSQLImplicits._
 
 object BankingApp {
 
-  def processBankingData(implicit spark: SparkSession): Unit = {
-    spark.processBankingData()
+  def processBankingDataSQL(implicit spark: SparkSession): Unit = {
+    spark.processBankingDataSQL()
   }
 
   def main(args: Array[String]): Unit = {
@@ -16,7 +16,7 @@ object BankingApp {
 
     implicit val spark: SparkSession = SparkSession.builder().appName("BankApp").master("local[*]").getOrCreate()
 
-    processBankingData
+    processBankingDataSQL
     spark.stop()
   }
 }
