@@ -75,7 +75,9 @@ class BankingAppTest extends AnyFlatSpec with Matchers with SharedSparkContext {
     spark.stop()
   }
 
-  /***/
+  /**
+   * Test if BankingApp create `customer_overall_summary temporary view with the correct information`
+   * */
   it should "create customer_overall_summary view correctly" in {
     val spark = SparkSession.builder().config(sc.getConf).getOrCreate()
     setupTestData(spark)
