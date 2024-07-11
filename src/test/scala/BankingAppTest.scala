@@ -70,7 +70,22 @@ class BankingAppTest extends AnyFlatSpec with Matchers with SharedSparkContext {
     /**@note This test assumes `transaction_summary` exists on Spark SQL Catalog*/
     val transactionSummaryViewResult = spark.sql("SELECT * FROM transaction_summary")
 
-    transactionSummaryViewResult.columns should contain allOf ("AccountID", "TotalCredits", "TotalDebits")
+    transactionSummaryViewResult.columns should contain allOf ("AccountID", "TotalCredits", "TotalDebits", "TransactionCount")
+
+    spark.stop()
+  }
+
+  /***/
+  it should "create customer_overall_summary view correctly" in {
+    val spark = SparkSession.builder().config(sc.getConf).getOrCreate()
+    setupTestData(spark)
+
+    /**@note This test assumes customer_overall_summary exists on Spark SQL Catalog*/
+    val customerSummaryOverviewView = spark.sql("Select * FROM customer_overall_summary")
+
+    customerSummaryOverviewView.columns should contain allOf ("AccountID", "CreatedAtLocal", "FormattedCreatedDate",
+                                                              "Balance", "CustomerName", "AgeGroup", "HolderType", "TotalCredits",
+                                                              "TotalDebits", "TransactionCount", "CalculatedBalance", "BalanceCheck")
 
     spark.stop()
   }
