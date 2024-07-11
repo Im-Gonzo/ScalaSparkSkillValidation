@@ -70,10 +70,39 @@ object BankingApp {
         |SELECT
         | a.AccountID,
         | COALESCE(SUM(CASE WHEN t.Type = 'Credit' THEN t.Amount ELSE 0 END)) AS TotalCredits,
-        | COALESCE(SUM(CASE WHEN t.Type = 'Debit' THEN t.Amount ELSE 0 END)) AS TotalDebits
+        | COALESCE(SUM(CASE WHEN t.Type = 'Debit' THEN t.Amount ELSE 0 END)) AS TotalDebits,
+        | COUNT(t.TransactionID) AS TransactionCount
         |FROM accounts a
         |LEFT JOIN transactions t ON a.AccountID = t.AccountID
         |GROUP BY a.AccountID
+        |""".stripMargin)
+  }
+
+  /***/
+  def createCustomerOverallView(spark: SparkSession): Unit = {
+    spark.sql(
+      """
+        | CREATE OR REPLACE TEMPORARY VIEW customer_overall_summary AS
+        | SELECT
+        |   ja.AccountID,
+        |   ja.CreatedAtLocal,
+        |   date_format(ja.CreatedDate, 'yyyy-MM-dd') AS FormattedCreatedDate,
+        |   ja.Balance,
+        |   ci.Name AS CustomerName,
+        |   ci.AgeGroup,
+        |   ja.HolderType,
+        |   COALESCE(ts.TotalCredits, 0) AS TotalCredits,
+        |   COALESCE(ts.TotalDebits, 0) AS TotalDebits,
+        |   COALESCE(ts.TransactionCount, 0) AS TransactionCount,
+        |   (ja.Balance + COALESCE(ts.TotalCredits, 0) - COALESCE(ts.TotalDebits, 0)) AS CalculatedBalance,
+        |   CASE
+        |     WHEN (ja.Balance + COALESCE(ts.TotalCredits, 0) - COALESCE(ts.TotalDebits, 0)) <> ja.Balance THEN 'Mismatch'
+        |     ELSE 'Match'
+        |   END AS BalanceCheck
+        | FROM joined_accounts ja
+        | JOIN customer_info ci ON ja.CustomerID = ci.CustomerID
+        | LEFT JOIN transaction_summary ts ON ja.AccountID = ts.AccountID
+        | ORDER BY ja.AccountID
         |""".stripMargin)
   }
 
@@ -91,6 +120,7 @@ object BankingApp {
         createJoinedAccountsView(spark)
         createCustomerInfoView(spark)
         createTransactionSummaryView(spark)
+        createCustomerOverallView(spark)
       }catch {
         case e: Exception =>
           println(s"Error processing banking data: ${e.getMessage}")
