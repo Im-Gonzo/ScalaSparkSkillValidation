@@ -37,6 +37,7 @@ class BankingAppTest extends AnyFlatSpec with Matchers with SharedSparkContext {
     val spark = SparkSession.builder().config(sc.getConf).getOrCreate()
     setupTestData(spark)
 
+    /**@note This test assumes `joined_accounts` exists on Spark SQL Catalog*/
     val joinedAccountResult = spark.sql("SELECT * FROM joined_accounts")
     val accounts = spark.table("accounts")
     joinedAccountResult.count() shouldBe accounts.count()
@@ -51,12 +52,25 @@ class BankingAppTest extends AnyFlatSpec with Matchers with SharedSparkContext {
     val spark = SparkSession.builder().config(sc.getConf).getOrCreate()
     setupTestData(spark)
 
+    /**@note This test assumes `customer_info` exists on Spark SQL Catalog*/
     val customerInfoViewResult = spark.sql("SELECT * FROM customer_info")
-    val requiredColumns = Seq("CustomerID", "Name", "Age", "AgeGroup")
 
-    requiredColumns.foreach { col =>
-      customerInfoViewResult.columns should contain (col)
-    }
+    customerInfoViewResult.columns should contain allOf ("CustomerID", "Name", "Age", "AgeGroup")
+
+    spark.stop()
+  }
+
+  /**
+   * Test if BankingApp create `transaction_summary` temporary view with the correct information
+   * */
+  it should "create transaction_summary view correctly" in {
+    val spark = SparkSession.builder().config(sc.getConf).getOrCreate()
+    setupTestData(spark)
+
+    /**@note This test assumes `transaction_summary` exists on Spark SQL Catalog*/
+    val transactionSummaryViewResult = spark.sql("SELECT * FROM transaction_summary")
+
+    transactionSummaryViewResult.columns should contain allOf ("AccountID", "TotalCredits", "TotalDebits")
 
     spark.stop()
   }
