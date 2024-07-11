@@ -45,7 +45,7 @@ class BankingAppTest extends AnyFlatSpec with Matchers with SharedSparkContext {
   }
 
   /**
-   * Test if BankingApp creaste `customer_info` temporary view with the correct columns.
+   * Test if BankingApp create `customer_info` temporary view with the correct columns.
    * */
   it should "create customer_info view with required columns" in {
     val spark = SparkSession.builder().config(sc.getConf).getOrCreate()
