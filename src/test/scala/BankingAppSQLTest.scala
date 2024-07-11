@@ -1,17 +1,16 @@
 package com.scalaSparkSkillValidation
 
 
-import org.apache.spark.sql.{DataFrame, SparkSession}
+import org.apache.spark.sql.SparkSession
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
-import com.holdenkarau.spark.testing.SharedSparkContext
 import com.scalaSparkSkillValidation.utils.DataGenerator
-import org.apache.spark.sql.functions._
+import org.scalatest.BeforeAndAfterAll
 
 /**
  * Test suite for BankingApp functionalities.
  * */
-class BankingAppSQLTest extends AnyFlatSpec with Matchers with SharedSparkContext {
+class BankingAppSQLTest extends AnyFlatSpec with Matchers with BeforeAndAfterAll  {
 
   implicit var spark: SparkSession = _
 
@@ -20,7 +19,10 @@ class BankingAppSQLTest extends AnyFlatSpec with Matchers with SharedSparkContex
    * */
   override def beforeAll(): Unit = {
     super.beforeAll()
-    spark = SparkSession.builder().config(sc.getConf).getOrCreate()
+    spark = SparkSession.builder()
+      .master("local[*]")
+      .appName("test")
+      .getOrCreate()
     setupTestData
   }
 
