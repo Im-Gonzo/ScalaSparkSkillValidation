@@ -24,5 +24,14 @@ class BankingAppTest extends AnyFlatSpec with Matchers with SharedSparkContext {
     transactions.createOrReplaceTempView("transactions")
     customers.createOrReplaceTempView("customers")
     accountHolders.createOrReplaceTempView("accountHolders")
+
+    BankingApp.processBankingData(spark)
+
+    /**@note Data for testing gets pulled from Spark SQL Catalog*/
+    val joinedAccountResult = spark.sql("SELECT * FROM joined_accounts")
+
+    joinedAccountResult.count() shouldBe accounts.count()
+
+
   }
 }
