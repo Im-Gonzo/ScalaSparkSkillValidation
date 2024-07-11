@@ -55,6 +55,28 @@ object BankingApp {
         |""".stripMargin)
   }
 
+
+  /**
+   * Creates a temporary view that shows transactions from customers formatted.
+   *
+   * @param spark: SparkSession
+   * @return Unit: Doesn't return anything
+   * @note This function assumes `transactions` exists in the Spark SQL Catalog
+   * */
+  def createTransactionSummaryView(spark: SparkSession): Unit = {
+    spark.sql(
+      """
+        |CREATE OR REPLACE TEMPORARY VIEW transaction_summary AS
+        |SELECT
+        | a.AccountID,
+        | COALESCE(SUM(CASE WHEN t.Type = 'Credit' THEN t.Amount ELSE 0 END)) AS TotalCredits,
+        | COALESCE(SUM(CASE WHEN t.Type = 'Debit' THEN t.Amount ELSE 0 END)) AS TotalDebits
+        |FROM accounts a
+        |LEFT JOIN transactions t ON a.AccountID = t.AccountID
+        |GROUP BY a.AccountID
+        |""".stripMargin)
+  }
+
   /**
    * Process banking data by creating a series of views available in the Spark SQL Catalog
    *
@@ -68,6 +90,7 @@ object BankingApp {
       try{
         createJoinedAccountsView(spark)
         createCustomerInfoView(spark)
+        createTransactionSummaryView(spark)
       }catch {
         case e: Exception =>
           println(s"Error processing banking data: ${e.getMessage}")
