@@ -12,7 +12,7 @@ import java.sql.{Timestamp, _}
 object DataGenerator {
 
   /**
-   * Generates sample date.
+   * Generates sample data.
    *
    * @param spark: SparkSession.
    * @return Tuple with 4 DataFrames (accounts, transactions, customers, accountHolders).
