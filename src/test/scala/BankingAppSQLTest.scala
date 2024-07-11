@@ -11,7 +11,7 @@ import org.apache.spark.sql.functions._
 /**
  * Test suite for BankingApp functionalities.
  * */
-class BankingAppTest extends AnyFlatSpec with Matchers with SharedSparkContext {
+class BankingAppSQLTest extends AnyFlatSpec with Matchers with SharedSparkContext {
 
   implicit var spark: SparkSession = _
 
