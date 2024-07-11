@@ -78,7 +78,14 @@ object BankingApp {
         |""".stripMargin)
   }
 
-  /***/
+  /**
+   * Creates a temporary view that shows overall information from customer
+   *
+   * @param spark: SparkSession
+   * @return Unit: Doesn't return anything
+   *
+   * @note This function assumes `joined_accounts`, `customer_info`, `transaction_summary` exists  in the Spark SQL Catalog
+   * */
   def createCustomerOverallView(spark: SparkSession): Unit = {
     spark.sql(
       """
