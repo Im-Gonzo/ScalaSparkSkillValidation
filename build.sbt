@@ -8,7 +8,10 @@ lazy val root = (project in file("."))
     libraryDependencies ++= Seq(
       "org.apache.spark" %% "spark-core" % "3.0.0",
       "org.apache.spark" %% "spark-sql" % "3.0.0",
-      "org.scalatest" %% "scalatest" % "3.2.12" % "test",
-      "com.holdenkarau" %% "spark-testing-base" % "3.4.1_1.5.0" % "test"
+      "org.scalatest" %% "scalatest" % "3.2.9" % "test",
+      "com.holdenkarau" %% "spark-testing-base" % "3.0.0_1.1.0" % "test",
+      "org.apache.logging.log4j" % "log4j-core" % "2.13.3",
+      "org.apache.logging.log4j" % "log4j-api" % "2.13.3",
+      "org.apache.logging.log4j" % "log4j-slf4j-impl" % "2.13.3"
     )
   )
